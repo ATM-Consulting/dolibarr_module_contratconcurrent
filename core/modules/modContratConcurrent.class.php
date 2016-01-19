@@ -88,7 +88,8 @@ class modContratConcurrent extends DolibarrModules
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@contratconcurrent')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array(
-			'hooks'=>array('contractcard')
+			'hooks'=>array('contractcard','pdfgeneration'),
+			'models' => 1,    
 		);
 
 		// Data directories to create when module is enabled.
@@ -259,6 +260,7 @@ class modContratConcurrent extends DolibarrModules
         $extrafields=new ExtraFields($this->db);
 		
 		$res = $extrafields->addExtraField('concurrent', 'Contrat concurrent', 'select', 0, '', 'contrat',0, 0,'', array("options"=> array('non','oui')));
+		$res = $extrafields->addExtraField('fk_leaser', 'Leaser', 'sellist', 100, '', 'contratdet',0, 0,'', array("options"=> array('societe:nom:rowid:: fournisseur=1'=>null)));
 	
 		$result=$this->_load_tables('/contratconcurrent/sql/');
 		

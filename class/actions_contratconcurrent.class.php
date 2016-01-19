@@ -50,6 +50,8 @@ class ActionsContratConcurrent
 	{
 	}
 
+
+
 	/**
 	 * Overloading the doActions function : replacing the parent's function with the one below
 	 *
@@ -58,18 +60,46 @@ class ActionsContratConcurrent
 	 * @param   string          &$action        Current action (if set). Generally create or edit or null
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
 	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
-	 */
+	 * 	 */
+	 
+	function beforePDFCreation($parameters, &$object, &$action, $hookmanager) {
+		
+		if ($parameters['currentcontext'] == 'contractcard')
+		{
+			global $db, $conf, $langs;
+			
+			dol_include_once('/societe/class/societe.class.php');
+			
+			foreach($object->lines as &$line) {
+				
+				if(!empty($line->array_options['options_fk_leaser'])) {
+					
+					$leaser = new Societe($db);
+					$leaser->fetch($line->array_options['options_fk_leaser']);
+					
+					if(!empty($line->product_label))$line->product_label.=' - ';
+					$line->product_label.=$leaser->name;
+					
+				}	
+				
+			}
+				
+		}
+		
+		
+	}	 
+	 
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
 
 		if ($parameters['currentcontext'] == 'contractcard')
 		{
-		 ?><script type="text/javascript">
-		 $(document).ready(function() {
-		 	$('a.butAction[href*="facture.php"]').closest('div.divButAction').remove();
-		 });
-		 </script>
-		 <?php
+			 ?><script type="text/javascript">
+			 $(document).ready(function() {
+			 	$('a.butAction[href*="facture.php"]').closest('div.divButAction').remove();
+			 });
+			 </script>
+			 <?php
 		}
 
 	}
