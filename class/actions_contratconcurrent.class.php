@@ -62,6 +62,81 @@ class ActionsContratConcurrent
 	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
 	 * 	 */
 	 
+	function formObjectOptions($parameters, &$object, &$action, $hookmanager) {
+		
+		if(in_array('commcard',explode(':', $parameters['context']))) {
+		
+			?><script type="text/javascript">
+			
+				$(document).ready(function() {
+					
+					$('a[href^="<?php echo dol_buildpath('/contrat/card.php',1) ?>"]').each(function(i,item) {
+						
+						if($(item).find('img').length == 0) {
+							$.ajax({
+								url:"<?php echo dol_buildpath('/contratconcurrent/script/interface.php',1) ?>"
+								,data:"get=is-concurrent&"+$(item).get(0).search.substring(1)
+							}).done(function(data) {
+								
+								if(data == 1) {
+									
+									$(item).css({
+										color:"grey"
+										,'font-weight':'bold'
+									}).attr('title','Est un contrat concurrent');
+								}
+								
+							});
+							
+						}
+								
+					});
+					
+				});
+			
+			</script><?php
+			
+		}
+	}
+	 
+	function printFieldPreListTitle($parameters, &$object, &$action, $hookmanager) {
+		
+		if($parameters['currentcontext']=='main' && strpos($_SERVER['PHP_SELF'],'/contrat/list.php')!==false)
+		 {
+		
+			?><script type="text/javascript">
+			
+				$(document).ready(function() {
+					
+					$('a[href^="<?php echo 'card.php' ?>"]').each(function(i,item) {
+							
+						$.ajax({
+							url:"<?php echo dol_buildpath('/contratconcurrent/script/interface.php',1) ?>"
+							,data:"get=is-concurrent&"+$(item).get(0).search.substring(1)
+						}).done(function(data) {
+							
+							if(data == 1) {
+								
+								$(item).css({
+									color:"grey"
+									,'font-weight':'bold'
+								}).attr('title','Est un contrat concurrent');
+							}
+							
+						});
+					
+					
+								
+					});
+					
+				});
+			
+			</script><?php
+			
+		}
+		
+	}
+	 
 	function beforePDFCreation($parameters, &$object, &$action, $hookmanager) {
 		
 		if ($parameters['currentcontext'] == 'contractcard')
