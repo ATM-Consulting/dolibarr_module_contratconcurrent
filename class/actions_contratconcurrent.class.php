@@ -81,7 +81,7 @@ class ActionsContratConcurrent
 								if(data == 1) {
 									
 									$(item).css({
-										color:"grey"
+										color:"#9900bb"
 										,'font-weight':'bold'
 									}).attr('title','Est un contrat concurrent');
 								}
@@ -118,7 +118,7 @@ class ActionsContratConcurrent
 							if(data == 1) {
 								
 								$(item).css({
-									color:"grey"
+									color:"#9900bb"
 									,'font-weight':'bold'
 								}).attr('title','Est un contrat concurrent');
 							}
