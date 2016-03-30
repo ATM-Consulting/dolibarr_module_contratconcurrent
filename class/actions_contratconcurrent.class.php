@@ -51,6 +51,136 @@ class ActionsContratConcurrent
 	}
 
 
+	function doActions ($parameters, &$object, &$action, $hookmanager)
+	{
+		if (GETPOST('addcontratline'))
+		{
+			$fk_line_contrat_origin = GETPOST('fk_line_contrat_origin', 'int');
+			if ($fk_line_contrat_origin > 0)
+			{
+				global $db;
+				dol_include_once('/contrat/class/contrat.class.php');
+				
+				$lineContrat = new ContratLigne($db);
+				$res = $lineContrat->fetch($fk_line_contrat_origin);
+				if ($res > 0)
+				{
+					$linePropal = new PropaleLigne($db);
+					$array_options = array();
+					
+					require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		            $extrafields = new ExtraFields($db);
+		            $TExtra = $extrafields->fetch_name_optionals_label($linePropal->table_element);
+					
+					// Récupération des extrafields de la ligne contrat vers la ligne propal
+					$lineContrat->fetch_optionals();
+					foreach ($lineContrat->array_options as $key => $val)
+					{
+						$subkey = substr($key, 8);
+						if (isset($TExtra[$subkey]))
+						{
+							$array_options[$key] = $val;
+						}
+					}
+					
+					$object->addline($lineContrat->description, $lineContrat->subprice, $lineContrat->qty, $lineContrat->tva_tx, $lineContrat->localtax1_tx, $lineContrat->localtax2_tx, $lineContrat->fk_product, $lineContrat->remise_percent, 'HT',  0.0, $lineContrat->info_bits, 1, -1, 0, 0, 0, $lineContrat->pa_ht, '', $lineContrat->date_ouverture_prevue, $lineContrat->date_fin_validite, $array_options, $lineContrat->fk_unit);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Overloading the doActions function : replacing the parent's function with the one below
+	 *
+	 * @param   array()         $parameters     Hook metadatas (context, etc...)
+	 * @param   CommonObject    &$object        The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param   string          &$action        Current action (if set). Generally create or edit or null
+	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
+	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
+	 */
+	function formAddObjectLine ($parameters, &$object, &$action, $hookmanager) 
+	{
+		global $db,$langs,$user,$conf;
+		
+		$TContext = explode(':',$parameters['context']);
+		if (in_array('propalcard',$TContext)) 
+        {
+        	dol_include_once('/core/class/html.form.class.php');
+		//$f = new TFormCore;
+			$form = new Form($db);
+			$colspan=7;
+			if($conf->margin->enabled)$colspan+=2;
+			
+        	?>
+        	
+        	<tr class="liste_titre nodrag nodrop">
+				<td colspan="9"><?php echo $langs->trans('ImportContratLine') ?></td>
+				<td></td>
+			</tr>
+			<tr class="pair">
+			<?php
+				$TContratConcurrent = $this->getTContratConcurrent();
+				
+				
+			?>
+				<script type="text/javascript">
+					function checkInputRadioContratConcurrent() 
+					{
+						$('input#prod_entry_mode_import_line_contrat_concurrent').click();
+						$('#select_type option[value="-1"]').attr('selected', true).prop('selected', true);
+						$('#idprod').val('');
+						$('#search_idprod').val('');
+					}
+				</script>
+				<td colspan="<?php echo $colspan; ?>">
+					<label>
+						<input id="prod_entry_mode_import_line_contrat_concurrent" type="radio" value="contrat_line" name="prod_entry_mode">
+						<?php echo $langs->trans('add_fk_contrat_line_in_propal'); ?>
+					</label>
+					
+					<?php
+					$moreparam = 'onchange="checkInputRadioContratConcurrent();" style="min-width:150px;"';
+					print Form::selectarray('fk_line_contrat_origin', $TContratConcurrent, '', 1, 0, 0, $moreparam, 0, 0, 0, '', '', 1);				
+					?>
+				</td>
+				<td valign="middle" align="center">
+					<input type="submit" id="addcontratline" name="addcontratline" value="Ajouter" class="button">
+				</td>
+			
+			</tr>
+			
+        	<?php
+		}
+	}
+
+	function getTContratConcurrent()
+	{
+		global $db;
+		
+		$Tab = array();
+		
+		$sql = 'SELECT c.ref, cd.rowid AS fk_contratdet, cd.fk_product, cd.description, cd.total_ht, p.ref AS product_ref, p.label AS product_label
+				FROM '.MAIN_DB_PREFIX.'contrat c
+				INNER JOIN '.MAIN_DB_PREFIX.'contratdet cd ON (c.rowid = cd.fk_contrat)
+				INNER JOIN '.MAIN_DB_PREFIX.'contrat_extrafields ce ON (c.rowid = ce.fk_object)
+				LEFT JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = cd.fk_product)
+				
+				WHERE ce.concurrent = 1
+		';
+		
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			while ($line = $db->fetch_object($resql))
+			{
+				if ($line->fk_product) $Tab[$line->fk_contratdet] = $line->ref.' - '.$line->product_ref.' - '.$line->product_label.' - '.price($line->total_ht, 0, '', 1, 'MT', -1, 'auto').' HT';
+				else $Tab[$line->fk_contratdet] = $line->ref.' - '.$line->description.' - '.price($line->total_ht, 0, '', 1, 'MT', -1, 'auto').' HT';
+				
+			}
+		}
+		
+		return $Tab;
+	}
 
 	/**
 	 * Overloading the doActions function : replacing the parent's function with the one below
