@@ -83,6 +83,8 @@ class ActionsContratConcurrent
 						}
 					}
 					
+					if (isset($TExtra['fk_contratdet_origin'])) $array_options['options_fk_contratdet_origin'] = $lineContrat->id;
+					
 					$object->addline($lineContrat->description, $lineContrat->subprice, $lineContrat->qty, $lineContrat->tva_tx, $lineContrat->localtax1_tx, $lineContrat->localtax2_tx, $lineContrat->fk_product, $lineContrat->remise_percent, 'HT',  0.0, $lineContrat->info_bits, 1, -1, 0, 0, 0, $lineContrat->pa_ht, '', $lineContrat->date_ouverture_prevue, $lineContrat->date_fin_validite, $array_options, $lineContrat->fk_unit);
 				}
 			}
@@ -102,6 +104,7 @@ class ActionsContratConcurrent
 	{
 		global $db,$langs,$user,$conf;
 		
+		$langs->load('contratconcurrent@contratconcurrent');
 		$TContext = explode(':',$parameters['context']);
 		if (in_array('propalcard',$TContext)) 
         {

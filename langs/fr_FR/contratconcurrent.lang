@@ -5,3 +5,6 @@ ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.
 
 ContratConcurrentSetup = Configuration du module ContratConcurrent
 ContratConcurrentAbout = A propos du module ContratConcurrent
+
+ImportContratLine=Ajout nouvelle ligne depuis contrat
+add_fk_contrat_line_in_propal=Ligne service contrat
