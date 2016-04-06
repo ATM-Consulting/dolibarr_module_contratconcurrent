@@ -122,7 +122,7 @@ class ActionsContratConcurrent
 			</tr>
 			<tr class="pair">
 			<?php
-				$TContratConcurrent = $this->getTContratConcurrent();
+				$TContratConcurrent = $this->getTContratConcurrent($object);
 				
 				
 			?>
@@ -156,19 +156,27 @@ class ActionsContratConcurrent
 		}
 	}
 
-	function getTContratConcurrent()
+	function getTContratConcurrent(&$object)
 	{
 		global $db;
 		
 		$Tab = array();
+		$TDisable = array();
+		foreach ($object->lines as $line)
+		{
+			if (!empty($line->array_options['options_fk_contratdet_origin'])) $TDisable[$line->array_options['options_fk_contratdet_origin']] = $line->array_options['options_fk_contratdet_origin'];
+		}
 		
-		$sql = 'SELECT c.ref, cd.rowid AS fk_contratdet, cd.fk_product, cd.description, cd.total_ht, p.ref AS product_ref, p.label AS product_label
+		$sql = 'SELECT c.ref, cd.rowid AS fk_contratdet, cd.fk_product, cd.description, cd.total_ht, p.ref AS product_ref, p.label AS product_label, cde.materiel
 				FROM '.MAIN_DB_PREFIX.'contrat c
 				INNER JOIN '.MAIN_DB_PREFIX.'contratdet cd ON (c.rowid = cd.fk_contrat)
+				LEFT JOIN '.MAIN_DB_PREFIX.'contratdet_extrafields cde ON (cd.rowid = cde.fk_object)
 				INNER JOIN '.MAIN_DB_PREFIX.'contrat_extrafields ce ON (c.rowid = ce.fk_object)
 				LEFT JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = cd.fk_product)
 				
 				WHERE ce.concurrent = 1
+				AND c.statut = 1
+				AND cd.fk_user_cloture IS NULL
 		';
 		
 		$resql = $db->query($sql);
@@ -176,8 +184,10 @@ class ActionsContratConcurrent
 		{
 			while ($line = $db->fetch_object($resql))
 			{
-				if ($line->fk_product) $Tab[$line->fk_contratdet] = $line->ref.' - '.$line->product_ref.' - '.$line->product_label.' - '.price($line->total_ht, 0, '', 1, 'MT', -1, 'auto').' HT';
-				else $Tab[$line->fk_contratdet] = $line->ref.' - '.$line->description.' - '.price($line->total_ht, 0, '', 1, 'MT', -1, 'auto').' HT';
+				if (!empty($TDisable[$line->fk_contratdet])) continue;
+
+				if ($line->fk_product) $Tab[$line->fk_contratdet] = $line->ref.' - '.$line->product_ref.' - '.$line->product_label.' - '.((!empty($line->materiel) ? $line->materiel.' - ' : '').price($line->total_ht, 0, '', 1, 'MT', -1, 'auto')).' HT';
+				else $Tab[$line->fk_contratdet] = $line->ref.' - '.$line->description.' - '.((!empty($line->materiel) ? $line->materiel.' - ' : '').price($line->total_ht, 0, '', 1, 'MT', -1, 'auto')).' HT';
 				
 			}
 		}
