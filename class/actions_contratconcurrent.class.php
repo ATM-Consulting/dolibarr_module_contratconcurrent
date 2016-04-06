@@ -109,7 +109,7 @@ class ActionsContratConcurrent
 		if (in_array('propalcard',$TContext)) 
         {
         	dol_include_once('/core/class/html.form.class.php');
-		//$f = new TFormCore;
+		
 			$form = new Form($db);
 			$colspan=7;
 			if($conf->margin->enabled)$colspan+=2;
@@ -151,7 +151,11 @@ class ActionsContratConcurrent
 				</td>
 			
 			</tr>
-			
+			<script type="text/javascript">
+				$(function() {
+					$('td:contains("ID ligne contrat d\'origine")').parent().hide();
+				});
+			</script>
         	<?php
 		}
 	}
