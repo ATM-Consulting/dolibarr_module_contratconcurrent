@@ -261,6 +261,7 @@ class modContratConcurrent extends DolibarrModules
 		
 		$res = $extrafields->addExtraField('concurrent', 'Contrat concurrent', 'select', 0, '', 'contrat',0, 0,'', array("options"=> array('non','oui')));
 		$res = $extrafields->addExtraField('periodicite', 'Périodicité', 'select', 0, '', 'contratdet',0, 0,'', array("options"=> array('trimestrielle','mensuelle',"annuelle")));
+		$res = $extrafields->addExtraField('default_nb_periode', 'Nombre de période par défaut', 'int', 0, '10', 'contratdet',0, 0,'', unserialize('a:1:{s:7:\"options\";a:1:{s:0:\"\";N;}}'));
 		$res = $extrafields->addExtraField('fk_leaser', 'Leaser', 'sellist', 100, '', 'contratdet',0, 0,'', array("options"=> array('societe:nom:rowid:: fournisseur=1'=>null)));
 	
 		$result=$this->_load_tables('/contratconcurrent/sql/');
