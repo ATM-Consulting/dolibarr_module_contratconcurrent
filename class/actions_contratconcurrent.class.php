@@ -102,7 +102,7 @@ class ActionsContratConcurrent
 	 */
 	function formAddObjectLine ($parameters, &$object, &$action, $hookmanager) 
 	{
-		global $db,$langs,$user,$conf;
+		global $db,$langs,$user,$conf,$inputalsopricewithtax;
 		
 		$langs->load('contratconcurrent@contratconcurrent');
 		$TContext = explode(':',$parameters['context']);
@@ -111,21 +111,43 @@ class ActionsContratConcurrent
         	dol_include_once('/core/class/html.form.class.php');
 		
 			$form = new Form($db);
-			$colspan=7;
-			if($conf->margin->enabled)$colspan+=2;
+			$TContratConcurrent = $this->getTContratConcurrent($object);
+			
+			$usemargins=0;
+			if (! empty($conf->margin->enabled) && ! empty($object->element)) $usemargins=1;
+			$colspan = 4;
+			if (! empty($inputalsopricewithtax)) $colspan++;
 			
         	?>
         	
         	<tr class="liste_titre nodrag nodrop">
-				<td colspan="9"><?php echo $langs->trans('ImportContratLine') ?></td>
-				<td></td>
+        		<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><?php echo $langs->trans('ImportContratLine') ?></td>
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<?php if (! empty($inputalsopricewithtax)) { ?>
+				<td align="right">&nbsp;</td>
+				<?php } ?>
+				<td align="right">&nbsp;</td>
+				<?php if(!empty($conf->global->PRODUCT_USE_UNITS)) { ?>
+				<td align="left">&nbsp;</td>
+				<?php }	?>
+				<td align="right">&nbsp;</td>
+				<?php
+				if ($object->situation_cycle_ref) {
+					print '<td align="right">&nbsp;</td>';
+				}
+				if (! empty($usemargins))
+				{
+					?>
+					<td align="right">&nbsp;</td>
+					<?php
+					if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right">&nbsp;</td>';
+					if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right">&nbsp;</td>';
+				}
+				?>
+				<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
 			</tr>
 			<tr class="pair">
-			<?php
-				$TContratConcurrent = $this->getTContratConcurrent($object);
-				
-				
-			?>
 				<script type="text/javascript">
 					function checkInputRadioContratConcurrent() 
 					{
@@ -135,7 +157,7 @@ class ActionsContratConcurrent
 						$('#search_idprod').val('');
 					}
 				</script>
-				<td colspan="<?php echo $colspan; ?>">
+				<td>
 					<label>
 						<input id="prod_entry_mode_import_line_contrat_concurrent" type="radio" value="contrat_line" name="prod_entry_mode">
 						<?php echo $langs->trans('add_fk_contrat_line_in_propal'); ?>
@@ -146,7 +168,30 @@ class ActionsContratConcurrent
 					print Form::selectarray('fk_line_contrat_origin', $TContratConcurrent, '', 1, 0, 0, $moreparam, 0, 0, 0, '', '', 1);				
 					?>
 				</td>
-				<td valign="middle" align="center">
+				<td>&nbsp;</td>
+				<td>&nbsp;</td>
+				<?php if (! empty($inputalsopricewithtax)) { ?>
+				<td align="right">&nbsp;</td>
+				<?php } ?>
+				<td align="right">&nbsp;</td>
+				<?php if(!empty($conf->global->PRODUCT_USE_UNITS)) { ?>
+				<td align="left">&nbsp;</td>
+				<?php }	?>
+				<td align="right">&nbsp;</td>
+				<?php
+				if ($object->situation_cycle_ref) {
+					print '<td align="right">&nbsp;</td>';
+				}
+				if (! empty($usemargins))
+				{
+					?>
+					<td align="right">&nbsp;</td>
+					<?php
+					if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td align="right">&nbsp;</td>';
+					if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right">&nbsp;</td>';
+				}
+				?>
+				<td valign="middle" align="center" colspan="<?php echo $colspan; ?>">
 					<input type="submit" id="addcontratline" name="addcontratline" value="Ajouter" class="button">
 				</td>
 			
