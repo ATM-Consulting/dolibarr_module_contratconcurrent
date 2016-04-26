@@ -88,7 +88,7 @@ class modContratConcurrent extends DolibarrModules
 		//							'workflow' => array('WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2'=>array('enabled'=>'! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)', 'picto'=>'yourpicto@contratconcurrent')) // Set here all workflow context managed by module
 		//                        );
 		$this->module_parts = array(
-			'hooks'=>array('contractcard','pdfgeneration','commcard','main'),
+			'hooks'=>array('contractcard','pdfgeneration','commcard','main', 'propalcard'),
 			'models' => 1,    
 		);
 
