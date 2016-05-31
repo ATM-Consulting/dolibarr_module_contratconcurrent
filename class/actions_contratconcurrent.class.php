@@ -196,15 +196,25 @@ class ActionsContratConcurrent
 				</td>
 			
 			</tr>
-			<script type="text/javascript">
-				$(function() {
-					$('td:contains("ID ligne contrat d\'origine")').parent().hide();
-				});
-			</script>
         	<?php
 		}
 	}
 
+	function formEditProductOptions($parameters, &$object, &$action, $hookmanager)
+	{
+		$TContext = explode(':',$parameters['context']);
+		if (in_array('propalcard',$TContext))
+		{
+			?>
+			<script type="text/javascript">
+				$(function() {
+					$('#tablelines td:contains("ID ligne contrat d\'origine")').parent().hide();
+				});
+			</script>
+			<?	
+		}
+	}
+	
 	function getTContratConcurrent(&$object)
 	{
 		global $db;
@@ -358,6 +368,17 @@ class ActionsContratConcurrent
 	 
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
+		$TContext = explode(':',$parameters['context']);
+		if (in_array('propalcard',$TContext))
+		{
+			?>
+			<script type="text/javascript">
+				$(function() {
+					$('#tablelines td:contains("ID ligne contrat d\'origine")').parent().hide();
+				});
+			</script>
+			<?	
+		}
 
 		if ($parameters['currentcontext'] == 'contractcard')
 		{
