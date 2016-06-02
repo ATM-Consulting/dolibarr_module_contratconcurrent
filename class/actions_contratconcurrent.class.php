@@ -235,7 +235,7 @@ class ActionsContratConcurrent
 				
 				WHERE ce.concurrent = 1
 				AND c.statut = 1
-				AND cd.statut = 4
+				#AND cd.statut = 4
 		';
 		
 		$resql = $db->query($sql);
