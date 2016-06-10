@@ -145,7 +145,7 @@ class ActionsContratConcurrent
 					if ($user->rights->margins->creer && ! empty($conf->global->DISPLAY_MARK_RATES)) 	echo '<td align="right">&nbsp;</td>';
 				}
 				?>
-				<td colspan="<?php echo $colspan; ?>">&nbsp;</td>
+				<td align="center" colspan="<?php echo $colspan; ?>">&nbsp;<?php if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) { echo $langs->trans('subtotal_title_to_add_under_title'); } ?></td>
 			</tr>
 			<tr class="pair">
 				<script type="text/javascript">
@@ -192,6 +192,11 @@ class ActionsContratConcurrent
 				}
 				?>
 				<td valign="middle" align="center" colspan="<?php echo $colspan; ?>">
+					<?php if (!empty($conf->global->SUBTOTAL_ALLOW_ADD_LINE_UNDER_TITLE)) {
+						dol_include_once('/subtotal/class/subtotal.class.php');
+						$TTitle = TSubtotal::getAllTitleFromDocument($object);
+						echo getHtmlSelectTitle($object);
+					} ?>
 					<input type="submit" id="addcontratline" name="addcontratline" value="Ajouter" class="button">
 				</td>
 			
