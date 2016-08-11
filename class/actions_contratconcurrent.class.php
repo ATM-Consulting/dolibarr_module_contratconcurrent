@@ -240,6 +240,7 @@ class ActionsContratConcurrent
 				
 				WHERE ce.concurrent = 1
 				AND c.statut = 1
+				AND c.fk_soc = '.(int) $object->socid.'
 				#AND cd.statut = 4
 		';
 		
