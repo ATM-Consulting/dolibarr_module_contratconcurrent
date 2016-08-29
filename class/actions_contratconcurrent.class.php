@@ -241,6 +241,13 @@ class ActionsContratConcurrent
 				WHERE ce.concurrent = 1
 				AND c.statut = 1
 				AND c.fk_soc = '.(int) $object->socid.'
+				
+				AND cd.rowid NOT IN (
+									SELECT pe.fk_contratdet_origin FROM '.MAIN_DB_PREFIX.'propaldet_extrafields pe 
+									INNER JOIN '.MAIN_DB_PREFIX.'propaldet pd ON (pd.rowid = pe.fk_object)
+									INNER JOIN '.MAIN_DB_PREFIX.'propal pl ON (pl.rowid = pd.fk_propal)
+									WHERE pl.fk_statut > 0
+									)
 				#AND cd.statut = 4
 		';
 		
