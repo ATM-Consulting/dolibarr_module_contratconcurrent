@@ -216,7 +216,7 @@ class ActionsContratConcurrent
 					$('#tablelines td:contains("ID ligne contrat d\'origine")').parent().hide();
 				});
 			</script>
-			<?	
+			<?php
 		}
 	}
 	
