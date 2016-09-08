@@ -251,7 +251,6 @@ class ActionsContratConcurrent
 									)
 				#AND cd.statut = 4
 		';
-		echo $sql;
 		
 		$resql = $db->query($sql);
 		if ($resql)
