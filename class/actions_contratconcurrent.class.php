@@ -247,7 +247,7 @@ class ActionsContratConcurrent
 									INNER JOIN '.MAIN_DB_PREFIX.'propaldet pd ON (pd.rowid = pe.fk_object)
 									INNER JOIN '.MAIN_DB_PREFIX.'propal pl ON (pl.rowid = pd.fk_propal)
 									WHERE pe.fk_contratdet_origin IS NOT NULL
-                      				AND pl.fk_statut = 2 OR pl.fk_statut = 4
+                      				AND (pl.fk_statut = 2 OR pl.fk_statut = 4)
 									)
 				#AND cd.statut = 4
 		';
