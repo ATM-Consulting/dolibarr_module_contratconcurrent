@@ -316,15 +316,14 @@ class ActionsContratConcurrent
 	}
 	 
 	function printFieldPreListTitle($parameters, &$object, &$action, $hookmanager) {
-		
+	    
 		if($parameters['currentcontext']=='main' && strpos($_SERVER['PHP_SELF'],'/contrat/list.php')!==false)
 		 {
-		
 			?><script type="text/javascript">
 			
 				$(document).ready(function() {
 					
-					$('a[href^="<?php echo 'card.php' ?>"]').each(function(i,item) {
+					$('a[href^="<?php echo dol_buildpath('/contrat/card.php',1) ?>"]').each(function(i,item) {
 							
 						$.ajax({
 							url:"<?php echo dol_buildpath('/contratconcurrent/script/interface.php',1) ?>"
